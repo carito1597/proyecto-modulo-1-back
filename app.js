@@ -25,6 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'API is running' });
+});
 app.use('/api', routes);
 
 // Error handling middleware
