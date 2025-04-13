@@ -18,12 +18,13 @@ Este proyecto es una API RESTful para la gestión de usuarios, tareas y autentic
 3. Configurar variables de entorno en `.env`:
    ```
    PORT=3000
-   DB_HOST=localhost
+   DB_HOST=dpg-cvu08mbuibrs73egp78g-a.oregon-postgres.render.com
    DB_PORT=5432
-   DB_USER=postgres
-   DB_PASSWORD=tu_contraseña
-   DB_NAME=proyecto
-   JWT_SECRET=tu_secret_key
+   DB_USER=proyecto_modulo_1_db_user
+   DB_PASSWORD=Q6c8Pl3zBfTTu9Zep02VguKcoRJ2lEk2
+   DB_NAME=proyecto_modulo_1_db
+   FRONTEND_URL=https://proyecto-modulo-1-pi.vercel.app
+   JWT_SECRET=una_clave_secreta_larga_y_segura
    ```
 4. Ejecutar migraciones:
    ```bash
