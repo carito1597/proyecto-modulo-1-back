@@ -24,19 +24,13 @@ const taskController = {
       const userId = req.user.id;
       const { status, search } = req.query;
 
-      let tasks;
+      // Crear objeto de filtros
+      const filters = {};
+      if (status) filters.status = status;
+      if (search) filters.search = search;
 
-      if (status) {
-        // Filtrar por estado
-        tasks = await Task.filterByStatus(userId, status);
-      } else if (search) {
-        // Buscar por palabra clave
-        tasks = await Task.searchByKeyword(userId, search);
-      } else {
-        // Obtener todas las tareas
-        tasks = await Task.getAllByUser(userId);
-      }
-
+      // Obtener tareas filtradas
+      const tasks = await Task.getFilteredTasks(userId, filters);
       res.json(tasks);
     } catch (error) {
       if (error.message === 'Estado no válido') {

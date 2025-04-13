@@ -220,6 +220,41 @@ class Task {
       throw error;
     }
   }
+
+  // Método para filtros combinados
+  static async getFilteredTasks(userId, filters = {}) {
+    try {
+      let query = 'SELECT * FROM tasks WHERE user_id = $1';
+      const values = [userId];
+      let paramCount = 1;
+
+      // Agregar filtro de estado si existe
+      if (filters.status) {
+        const validStatuses = ['pendiente', 'en progreso', 'completada'];
+        if (!validStatuses.includes(filters.status)) {
+          throw new Error('Estado no válido');
+        }
+        paramCount++;
+        query += ` AND status = $${paramCount}`;
+        values.push(filters.status);
+      }
+
+      // Agregar filtro de búsqueda si existe
+      if (filters.search) {
+        paramCount++;
+        query += ` AND (LOWER(title) LIKE LOWER($${paramCount}) OR LOWER(description) LIKE LOWER($${paramCount}))`;
+        values.push(`%${filters.search}%`);
+      }
+
+      // Ordenar por fecha de creación
+      query += ' ORDER BY created_at DESC';
+
+      const result = await pool.query(query, values);
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Task; 
