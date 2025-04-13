@@ -12,18 +12,21 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: '*', // Permite todas las origenes durante desarrollo
+  origin: ['https://proyecto-modulo-1-pi.vercel.app', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  credentials: true,
+  credentials: false, // Cambiado a false si no estás usando cookies
   optionsSuccessStatus: 200
 };
 
-// Debug middleware para CORS
+// Debug middleware para CORS y errores
 app.use((req, res, next) => {
-  console.log('Origin:', req.headers.origin);
-  console.log('Method:', req.method);
+  console.log('Request:', {
+    method: req.method,
+    path: req.path,
+    origin: req.headers.origin,
+    body: req.body
+  });
   next();
 });
 
@@ -39,10 +42,15 @@ app.get('/', (req, res) => {
 });
 app.use('/api', routes);
 
-// Error handling middleware
+// Middleware de manejo de errores mejorado
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  console.error('Stack:', err.stack);
+  console.error('Error detallado:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    body: req.body
+  });
   
   if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message });
@@ -52,9 +60,11 @@ app.use((err, req, res, next) => {
     return res.status(401).json({ error: 'Token inválido o no proporcionado' });
   }
   
+  // Error genérico con más detalles
   res.status(500).json({ 
     error: 'Error interno del servidor',
-    message: err.message
+    message: err.message,
+    path: req.path
   });
 });
 
