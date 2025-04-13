@@ -8,6 +8,19 @@ Este proyecto es una API RESTful para la gestión de usuarios, tareas y autentic
 - PostgreSQL
 - npm o yarn
 
+## URLs de Despliegue
+
+- **Backend**: https://proyecto-modulo-1-back.onrender.com
+- **Frontend**: https://proyecto-modulo-1-pi.vercel.app
+
+### Endpoints Desplegados
+
+- **Registro**: https://proyecto-modulo-1-back.onrender.com/api/auth/register
+- **Login**: https://proyecto-modulo-1-back.onrender.com/api/auth/login
+- **Perfil de Usuario**: https://proyecto-modulo-1-back.onrender.com/api/auth/me
+- **Usuarios**: https://proyecto-modulo-1-back.onrender.com/api/users
+- **Tareas**: https://proyecto-modulo-1-back.onrender.com/api/tasks
+
 ## Instalación
 
 1. Clonar el repositorio
