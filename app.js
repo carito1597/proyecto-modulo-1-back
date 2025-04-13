@@ -12,12 +12,20 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://proyecto-modulo-1-pi.vercel.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*', // Permite todas las origenes durante desarrollo
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
   credentials: true,
   optionsSuccessStatus: 200
 };
+
+// Debug middleware para CORS
+app.use((req, res, next) => {
+  console.log('Origin:', req.headers.origin);
+  console.log('Method:', req.method);
+  next();
+});
 
 // Middleware
 app.use(cors(corsOptions));
