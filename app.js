@@ -12,10 +12,11 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://proyecto-modulo-1-pi.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 // Middleware
@@ -32,8 +33,26 @@ app.use('/api', routes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Error:', err.message);
+  console.error('Stack:', err.stack);
+  
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message });
+  }
+  
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ error: 'Token inválido o no proporcionado' });
+  }
+  
+  res.status(500).json({ 
+    error: 'Error interno del servidor',
+    message: err.message
+  });
+});
+
+// Handle 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
 // Start server
