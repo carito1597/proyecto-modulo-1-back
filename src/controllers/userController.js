@@ -27,7 +27,7 @@ const userController = {
     }
   },
 
-  // Create new user
+  // Create new user (Register)
   createUser: async (req, res) => {
     try {
       const { name, email, password } = req.body;
@@ -37,15 +37,31 @@ const userController = {
         return res.status(400).json({ error: 'Name, email and password are required' });
       }
 
-      // Check if email already exists
-      const existingUser = await User.findByEmail(email);
-      if (existingUser) {
-        return res.status(400).json({ error: 'Email already in use' });
-      }
-
       const newUser = await User.create(name, email, password);
       res.status(201).json(newUser);
     } catch (error) {
+      if (error.message === 'Email already exists' || error.message === 'Invalid email format') {
+        return res.status(400).json({ error: error.message });
+      }
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Login user
+  loginUser: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+
+      const userData = await User.login(email, password);
+      res.json(userData);
+    } catch (error) {
+      if (error.message === 'User not found' || error.message === 'Invalid password') {
+        return res.status(401).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   },
@@ -62,17 +78,12 @@ const userController = {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      // Check if new email is already in use by another user
-      if (email && email !== existingUser.email) {
-        const emailExists = await User.findByEmail(email);
-        if (emailExists) {
-          return res.status(400).json({ error: 'Email already in use' });
-        }
-      }
-
       const updatedUser = await User.update(id, { name, email, password });
       res.json(updatedUser);
     } catch (error) {
+      if (error.message === 'Email already exists' || error.message === 'Invalid email format') {
+        return res.status(400).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   },
