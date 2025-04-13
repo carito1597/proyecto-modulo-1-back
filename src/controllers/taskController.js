@@ -18,13 +18,30 @@ const taskController = {
     }
   },
 
-  // Obtener todas las tareas del usuario
+  // Obtener todas las tareas del usuario con filtros
   getAllTasks: async (req, res) => {
     try {
-      const userId = req.user.id; // Este valor vendrá del middleware de autenticación
-      const tasks = await Task.getAllByUser(userId);
+      const userId = req.user.id;
+      const { status, search } = req.query;
+
+      let tasks;
+
+      if (status) {
+        // Filtrar por estado
+        tasks = await Task.filterByStatus(userId, status);
+      } else if (search) {
+        // Buscar por palabra clave
+        tasks = await Task.searchByKeyword(userId, search);
+      } else {
+        // Obtener todas las tareas
+        tasks = await Task.getAllByUser(userId);
+      }
+
       res.json(tasks);
     } catch (error) {
+      if (error.message === 'Estado no válido') {
+        return res.status(400).json({ error: error.message });
+      }
       res.status(500).json({ error: error.message });
     }
   },

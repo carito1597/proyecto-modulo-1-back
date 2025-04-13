@@ -183,6 +183,43 @@ class Task {
       throw error;
     }
   }
+
+  // Filtrar tareas por estado
+  static async filterByStatus(userId, status) {
+    try {
+      const validStatuses = ['pendiente', 'en progreso', 'completada'];
+      if (!validStatuses.includes(status)) {
+        throw new Error('Estado no válido');
+      }
+
+      const result = await pool.query(
+        'SELECT * FROM tasks WHERE user_id = $1 AND status = $2 ORDER BY created_at DESC',
+        [userId, status]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Buscar tareas por palabra clave
+  static async searchByKeyword(userId, keyword) {
+    try {
+      const result = await pool.query(
+        `SELECT * FROM tasks 
+         WHERE user_id = $1 
+         AND (
+           LOWER(title) LIKE LOWER($2) 
+           OR LOWER(description) LIKE LOWER($2)
+         )
+         ORDER BY created_at DESC`,
+        [userId, `%${keyword}%`]
+      );
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Task; 
