@@ -1,6 +1,6 @@
 # API de Autenticación y Usuarios
 
-Este proyecto es una API RESTful para la gestión de usuarios y autenticación, construida con Node.js, Express y PostgreSQL.
+Este proyecto es una API RESTful para la gestión de usuarios, tareas y autenticación, construida con Node.js, Express y PostgreSQL.
 
 ## Requisitos Previos
 
@@ -207,6 +207,137 @@ Este proyecto es una API RESTful para la gestión de usuarios y autenticación, 
   }
   ```
 
+### Tareas
+
+#### 1. Obtener Todas las Tareas
+- **URL**: `/api/tasks`
+- **Método**: `GET`
+- **Headers**: 
+  ```
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+- **Respuesta Exitosa** (200 OK):
+  ```json
+  [
+    {
+      "id": 1,
+      "title": "Tarea de ejemplo",
+      "description": "Descripción de la tarea",
+      "status": "pending",
+      "created_at": "2024-04-13T12:00:00.000Z",
+      "updated_at": "2024-04-13T12:00:00.000Z"
+    }
+  ]
+  ```
+
+#### 2. Obtener Tarea por ID
+- **URL**: `/api/tasks/:id`
+- **Método**: `GET`
+- **Headers**: 
+  ```
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+- **Respuesta Exitosa** (200 OK):
+  ```json
+  {
+    "id": 1,
+    "title": "Tarea de ejemplo",
+    "description": "Descripción de la tarea",
+    "status": "pending",
+    "created_at": "2024-04-13T12:00:00.000Z",
+    "updated_at": "2024-04-13T12:00:00.000Z"
+  }
+  ```
+- **Respuesta de Error** (404 Not Found):
+  ```json
+  {
+    "error": "Tarea no encontrada"
+  }
+  ```
+
+#### 3. Crear Nueva Tarea
+- **URL**: `/api/tasks`
+- **Método**: `POST`
+- **Headers**: 
+  ```
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+- **Body**:
+  ```json
+  {
+    "title": "Nueva tarea",
+    "description": "Descripción de la nueva tarea",
+    "status": "pending"
+  }
+  ```
+- **Respuesta Exitosa** (201 Created):
+  ```json
+  {
+    "id": 1,
+    "title": "Nueva tarea",
+    "description": "Descripción de la nueva tarea",
+    "status": "pending",
+    "created_at": "2024-04-13T12:00:00.000Z",
+    "updated_at": "2024-04-13T12:00:00.000Z"
+  }
+  ```
+- **Respuesta de Error** (400 Bad Request):
+  ```json
+  {
+    "error": "El título es requerido"
+  }
+  ```
+
+#### 4. Actualizar Tarea
+- **URL**: `/api/tasks/:id`
+- **Método**: `PUT`
+- **Headers**: 
+  ```
+  Content-Type: application/json
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+- **Body**:
+  ```json
+  {
+    "title": "Tarea actualizada",
+    "description": "Descripción actualizada",
+    "status": "completed"
+  }
+  ```
+- **Respuesta Exitosa** (200 OK):
+  ```json
+  {
+    "id": 1,
+    "title": "Tarea actualizada",
+    "description": "Descripción actualizada",
+    "status": "completed",
+    "created_at": "2024-04-13T12:00:00.000Z",
+    "updated_at": "2024-04-13T13:00:00.000Z"
+  }
+  ```
+- **Respuesta de Error** (404 Not Found):
+  ```json
+  {
+    "error": "Tarea no encontrada"
+  }
+  ```
+
+#### 5. Eliminar Tarea
+- **URL**: `/api/tasks/:id`
+- **Método**: `DELETE`
+- **Headers**: 
+  ```
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+- **Respuesta Exitosa** (204 No Content)
+- **Respuesta de Error** (404 Not Found):
+  ```json
+  {
+    "error": "Tarea no encontrada"
+  }
+  ```
+
 ## Códigos de Estado HTTP
 
 - `200 OK`: La solicitud se ha completado con éxito
@@ -236,5 +367,27 @@ curl -X POST http://localhost:3000/api/auth/login \
 ### Obtener Perfil
 ```bash
 curl http://localhost:3000/api/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Crear Tarea
+```bash
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{"title":"Nueva tarea","description":"Descripción de la tarea","status":"pending"}'
+```
+
+### Actualizar Tarea
+```bash
+curl -X PUT http://localhost:3000/api/tasks/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{"title":"Tarea actualizada","status":"completed"}'
+```
+
+### Eliminar Tarea
+```bash
+curl -X DELETE http://localhost:3000/api/tasks/1 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ``` 
